@@ -57,52 +57,69 @@ def calculate_tax_2024_new_regime(income, sd=75000):
     total_tax = tax + cess
     return total_tax  
 
-def calculate_tax_old_regime(income):
+def calculate_tax_old_regime(income, age):
     tax = 0
-    # Tax Slabs for Old Regime
-    if income <= 250000:
-        tax = 0
-    elif income <= 300000:
-        tax = 0.05 * (income - 250000)
-    elif income <= 500000:
-        tax = 0.05 * (income - 250000)
-    elif income <= 1000000:
-        tax = 0.20 * (income - 500000) + 12500
-    else:
-        tax = 0.30 * (income - 1000000) + 112500
-    
+    # Tax Slabs for Old Regime based on age
+    if age < 60:  # Below 60 years
+        if income <= 250000:
+            tax = 0
+        elif income <= 500000:
+            tax = 0.05 * (income - 250000)
+        elif income <= 1000000:
+            tax = 0.20 * (income - 500000) + 12500
+        else:
+            tax = 0.30 * (income - 1000000) + 112500
+    elif 60 <= age < 80:  # Between 60 and 80 years (Senior Citizens)
+        if income <= 300000:
+            tax = 0
+        elif income <= 500000:
+            tax = 0.05 * (income - 300000)
+        elif income <= 1000000:
+            tax = 0.20 * (income - 500000) + 10000
+        else:
+            tax = 0.30 * (income - 1000000) + 120000
+    else:  # Above 80 years (Super Senior Citizens)
+        if income <= 500000:
+            tax = 0
+        elif income <= 1000000:
+            tax = 0.20 * (income - 500000)
+        else:
+            tax = 0.30 * (income - 1000000) + 100000
+
     # Apply cess (4%)
     cess = 0.04 * tax
     total_tax = tax + cess
     return total_tax
 
- 
 # Calculate tax based on choice
-def calculate_tax(annual_income,fy):
-    old_regime,new_regime=0,0
+def calculate_tax(annual_income, fy, age):
+    old_regime, new_regime = 0, 0
+    sd = 75000.00  # standard deduction for new regimes
+
     if fy == 1:
-        old_regime = calculate_tax_old_regime(annual_income)
-        new_regime = calculate_tax_2024_new_regime(annual_income)
-
+        old_regime = calculate_tax_old_regime(annual_income, age)
+        new_regime = calculate_tax_2024_new_regime(annual_income, sd)
     elif fy == 2:
-        old_regime = calculate_tax_old_regime(annual_income)
-        new_regime = calculate_tax_2025_new_regime(annual_income)
+        old_regime = calculate_tax_old_regime(annual_income, age)
+        new_regime = calculate_tax_2025_new_regime(annual_income, sd)
     
-    return old_regime,new_regime
+    return old_regime, new_regime
 
-# output = calculate_tax(1300000.00, 75000.00)
+# User input section
 print("Income Tax Calculator\nChoose Fiscal Year :\n1. 2024-25\n2. 2025-26")
-fy = int(input('Input Choice: '))
-annual_income = float(input("Enter annual income: "))
+fy = int(input('Input Choice: '))  # 1 or 2 for fiscal year selection
+annual_income = float(input("Enter annual income: "))  # User's income
+age = int(input("Enter your age: "))  # User's age
 
-old_regime,new_regime = calculate_tax(annual_income,fy)
-# Default standard deduction for new regimes
-sd = 75000.00
-    
+# Calculate tax for both regimes
+old_regime, new_regime = calculate_tax(annual_income, fy, age)
+
+# Display results
 print("\nTax Calculation Results:")
-print(f"Tax under  New Regime: ₹{new_regime:.2f}")
+print(f"Tax under New Regime: ₹{new_regime:.2f}")
 print(f"Tax under Old Tax Regime: ₹{old_regime:.2f}")
 
+# Calculate savings and verdict
 if new_regime < old_regime:
     savings = old_regime - new_regime
     print(f"\nYou save ₹{savings:.2f} by choosing the New Regime.")

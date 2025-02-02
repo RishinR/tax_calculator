@@ -57,8 +57,10 @@ def calculate_tax_2024_new_regime(income, sd=75000):
     total_tax = tax + cess
     return total_tax  
 
-def calculate_tax_old_regime(income, age):
+def calculate_tax_old_regime(income, age,deduction=0):
     tax = 0
+    income -= deduction
+    
     # Tax Slabs for Old Regime based on age
     if age < 60:  # Below 60 years
         if income <= 250000:
@@ -92,27 +94,29 @@ def calculate_tax_old_regime(income, age):
     return total_tax
 
 # Calculate tax based on choice
-def calculate_tax(annual_income, fy, age):
+def calculate_tax(annual_income, fy, age, deduction=0):
     old_regime, new_regime = 0, 0
     sd = 75000.00  # standard deduction for new regimes
 
     if fy == 1:
-        old_regime = calculate_tax_old_regime(annual_income, age)
+        old_regime = calculate_tax_old_regime(annual_income, age, deduction)
         new_regime = calculate_tax_2024_new_regime(annual_income, sd)
     elif fy == 2:
-        old_regime = calculate_tax_old_regime(annual_income, age)
+        old_regime = calculate_tax_old_regime(annual_income, age, deduction)
         new_regime = calculate_tax_2025_new_regime(annual_income, sd)
     
     return old_regime, new_regime
 
 # User input section
 print("Income Tax Calculator\nChoose Fiscal Year :\n1. 2024-25\n2. 2025-26")
-fy = int(input('Input Choice: '))  # 1 or 2 for fiscal year selection
-annual_income = float(input("Enter annual income: "))  # User's income
-age = int(input("Enter your age: "))  # User's age
+fy = int(input('Input Choice: ')) 
+annual_income = float(input("Enter annual income: ")) 
+age = int(input("Enter your age: ")) 
+deduction = float(input("Enter annual Deductions: ")) 
+
 
 # Calculate tax for both regimes
-old_regime, new_regime = calculate_tax(annual_income, fy, age)
+old_regime, new_regime = calculate_tax(annual_income, fy, age, deduction)
 
 # Display results
 print("\nTax Calculation Results:")

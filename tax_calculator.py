@@ -1,4 +1,4 @@
-def calculate_tax_2025(income, sd):
+def calculate_tax_2025_new_regime(income, sd=75000):
     slab = [[400000, 0], [400000, 5], [400000, 10], [400000, 15], [400000, 20], [400000, 25], [0, 30]]
 
     if income <= 1200000.00 + sd:
@@ -27,7 +27,7 @@ def calculate_tax_2025(income, sd):
             # print(amount, taxable_amount, income, tax)
         return tax           
             
-def calculate_tax_2024_new_regime(income, sd):
+def calculate_tax_2024_new_regime(income, sd=75000):
     tax = 0
     cess = 0
 
@@ -57,7 +57,7 @@ def calculate_tax_2024_new_regime(income, sd):
     total_tax = tax + cess
     return total_tax  
 
-def calculate_tax_old_regime(income, age):
+def calculate_tax_old_regime(income):
     tax = 0
     # Tax Slabs for Old Regime
     if income <= 250000:
@@ -77,40 +77,37 @@ def calculate_tax_old_regime(income, age):
     return total_tax
 
  
-# output = calculate_tax(1300000.00, 75000.00)
-print("Income Tax Calculator\nChoose Year and Regime:\n1. 2025 New Regime\n2. 2024 New Regime\n3. Old Tax Regime")
-choice = int(input('Input Choice: '))
-annual_income = float(input("Enter annual income: "))
-age = int(input("Enter your age: "))
+# Calculate tax based on choice
+def calculate_tax(annual_income,fy):
+    old_regime,new_regime=0,0
+    if fy == 1:
+        old_regime = calculate_tax_old_regime(annual_income)
+        new_regime = calculate_tax_2024_new_regime(annual_income)
 
+    elif fy == 2:
+        old_regime = calculate_tax_old_regime(annual_income)
+        new_regime = calculate_tax_2025_new_regime(annual_income)
+    
+    return old_regime,new_regime
+
+# output = calculate_tax(1300000.00, 75000.00)
+print("Income Tax Calculator\nChoose Fiscal Year :\n1. 2024-25\n2. 2025-26")
+fy = int(input('Input Choice: '))
+annual_income = float(input("Enter annual income: "))
+
+old_regime,new_regime = calculate_tax(annual_income,fy)
 # Default standard deduction for new regimes
 sd = 75000.00
+    
+print("\nTax Calculation Results:")
+print(f"Tax under  New Regime: ₹{new_regime:.2f}")
+print(f"Tax under Old Tax Regime: ₹{old_regime:.2f}")
 
-# Calculate tax based on choice
-if choice == 1:
-    output_2025 = calculate_tax_2025(annual_income, sd)
-    print(f"Tax under 2025 New Regime: ₹{output_2025:.2f}")
-elif choice == 2:
-    output_2024 = calculate_tax_2024_new_regime(annual_income, sd)
-    print(f"Tax under 2024 New Regime: ₹{output_2024:.2f}")
-elif choice == 3:
-    output_old_regime = calculate_tax_old_regime(annual_income, age)
-    print(f"Tax under Old Tax Regime: ₹{output_old_regime:.2f}")
-
-# Tax difference calculation
-if choice == 1:
-    output_2024 = calculate_tax_2024_new_regime(annual_income, sd)
-    output_old_regime = calculate_tax_old_regime(annual_income, age)
-    print(f"\nTax under 2024 New Regime: ₹{output_2024:.2f}")
-    print(f"Tax under Old Tax Regime: ₹{output_old_regime:.2f}")
-    
-    print(f"\nTax difference between 2025 New Regime and Old Tax Regime: ₹{output_2025 - output_old_regime:.2f}")
-    print(f"Tax difference between 2024 New Regime and Old Tax Regime: ₹{output_2024 - output_old_regime:.2f}")
-    
-elif choice == 2:
-    output_2025 = calculate_tax_2025(annual_income, sd)
-    output_old_regime = calculate_tax_old_regime(annual_income, age)
-    print(f"\nTax under 2025 New Regime: ₹{output_2025:.2f}")
-    print(f"Tax under Old Tax Regime: ₹{output_old_regime:.2f}")
-    
-    print(f"\nTax difference between 2025 New Regime and Old Tax Regime: ₹{output_2025 - output_old_regime:.2f}")
+if new_regime < old_regime:
+    savings = old_regime - new_regime
+    print(f"\nYou save ₹{savings:.2f} by choosing the New Regime.")
+    print("Verdict: New Regime is better for you.")
+else:
+    savings = old_regime - new_regime
+    print(f"\nYou save ₹{savings:.2f} by choosing the Old Tax Regime.")
+    print("Verdict: Old Tax Regime is better for you.")
